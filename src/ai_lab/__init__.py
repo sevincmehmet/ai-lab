@@ -1,14 +1,20 @@
+from ai_lab.arama import en_pahali, sehre_gore
 from ai_lab.etkinlik import Event
 from ai_lab.veri import events
-
-# 15. görevde arama.py'ye sehre_gore'yi yazınca bu satırı aç:
-# from ai_lab.arama import sehre_gore
 
 
 def main() -> None:
     etkinlikler = [Event(**e) for e in events]
 
-    # sehre_gore hazır olunca alttaki satırı şöyle değiştir:
+    # print("İzmir'deki etkinlikler:")
     # for etkinlik in sehre_gore(etkinlikler, "İzmir"):
-    for etkinlik in etkinlikler:
-        print(etkinlik.ozet())
+    #     print(" -", etkinlik.ozet())
+
+    # print("İstanbul'daki etkinlikler:")
+    # for etkinlik in sehre_gore(etkinlikler, "İstanbul"):
+    #     print("-", etkinlik.ozet())
+    
+    print(en_pahali(etkinlikler))
+    # Diğer fonksiyonları yazınca burada dene, örneğin:
+    # from ai_lab.arama import ucretsizler   (bunu dosyanın en üstüne taşı)
+    # print("Ücretsizler:", [e.title for e in ucretsizler(etkinlikler)])

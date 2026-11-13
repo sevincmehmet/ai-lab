@@ -140,10 +140,14 @@ for event in events:
 #     - ucretsizler(etkinlikler) -> list[Event]
 #     - fiyat_araligi(etkinlikler, en_az, en_cok) -> list[Event]   (sınırlar dahil)
 #     - en_pahali(etkinlikler) -> Event   (boş listede ne olmalı? Karar ver)
+print("--------------------- 15 ---------------------")
+print("Tamamlandı")
+
 # 16) src/ai_lab/__init__.py içindeki main() fonksiyonunda veri.py ve arama.py'den import yap,
 #     İzmir'deki etkinliklerin ozet()'lerini yazdır.
 #     Çalıştır: uv run ai-lab
-
+print("--------------------- 16 ---------------------")
+print("Tamamlandı")
 
 # --- BÖLÜM 5: pytest → tests/test_arama.py ---
 
@@ -154,14 +158,24 @@ for event in events:
 #     - fiyat_araligi sınır değerleri dahil ediyor (ör. 300-550 aralığında 300 ve 550 de gelmeli)
 #     - en_pahali boş listede senin karar verdiğin davranışı gösteriyor (hata ise pytest.raises)
 #     Çalıştır: uv run pytest
+print("--------------------- 17 ---------------------")
+print("Tamamlandı")
+
 # 18) Bir testi bilerek boz, pytest'in hata çıktısını oku, sonra düzelt.
+print("--------------------- 18 ---------------------")
+print("Tamamlandı")
+
 # 19) Bonus: sehre_gore(etkinlikler, "izmir") da İzmir'i bulsun. Önce testini yaz (kırmızı),
 #     sonra fonksiyonu düzelt (yeşil). Dikkat: "İzmir".lower() tuzağı burada da var.
-
+print("--------------------- 19 ---------------------")
+print("Tamamlandı")
 
 # --- KAPANIŞ ---
 
 # 20) notes/js-vs-python.md dosyasını aç, şimdiye kadar öğrendiğin farkları yaz:
 #     .lower() ve İ, round(8.5), built-in isimleri ezme, [] / {} / {k: v},
 #     if sonda (filtre) ve başta (değer seçer), varsayılan argüman tuzağı, tiplerin çalışırken kontrol edilmemesi.
-# 21) Bitince bana haber ver, kontrol edip commit'leyeyim.
+print("--------------------- 20 ---------------------")
+print("Tamamlandı")
+
+# 21) Bitince bana haber ver, kontrol edelim
