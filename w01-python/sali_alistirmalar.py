@@ -35,24 +35,26 @@ print(etkinlik_ozeti("Duman Konseri", sehir="İzmir", fiyat=750))
 #    fiyat_hesapla(100, 10) çağrısını dene: hangi hatayı veriyor, yorum satırına yaz. * ne işe yarıyor?
 print("--------------------- 3 ---------------------")
 
-def fiyat_hesapla(fiyat, *, indirim=0, kdv=0.20): 
+def fiyat_hesapla(fiyat: float, *, indirim: float=0, kdv: float=0.20) -> float: 
     fiyat -= fiyat * (indirim/100)
-    fiyat += fiyat * (kdv/100)
+    fiyat += fiyat * kdv
     return fiyat
 
 print(fiyat_hesapla(100, indirim=10))
-print(fiyat_hesapla(100, indirim=10, kdv=50))
+print(fiyat_hesapla(100, indirim=10, kdv=0.50))
 # print(fiyat_hesapla(100, 10)) 
 #Traceback (most recent call last):
   #File "/Users/dursunalisevinc/PycharmProjects/PythonProject1/w01-python/sali_alistirmalar.py", line 50, in <module>
    # print(fiyat_hesapla(100, 10))
+# TypeError: fiyat_hesapla() takes 1 positional argument but 2 were given
+# * -> ondan sonraki parametreler isimle verilmek zorunda (indirim=10)
 
 # 4) Değiştirilebilir varsayılan argüman tuzağı:
 #    def ekle(eleman, liste=[]) yaz, elemanı listeye ekleyip listeyi döndürsün.
 #    ekle("a"), ekle("b"), ekle("c") çağrılarını ayrı ayrı yazdır. Ne bekliyordun, ne oldu?
 #    Sonra varsayılan değeri None yaparak düzelt.
 print("--------------------- 4 ---------------------")
-def ekle(eleman, liste=[]): 
+def ekle(eleman: str, liste: list[str] = []) -> list[str]:
     liste.append(eleman)
     return liste
 
@@ -60,16 +62,16 @@ print(ekle('a')) # a
 print(ekle('b')) # a, b
 print(ekle('c')) # a, b, c -> Liste hafızada kalıyor 
 
-def ekle_dogru(eleman, liste=None):
+def ekle_dogru(eleman: str, liste: list[str] | None = None) -> list[str]:
     if liste is None:
         liste = []
     liste.append(eleman)
     return liste
 
-print(ekle_dogru('d')) # a
-print(ekle_dogru('e')) # a, b
-print(ekle_dogru('f')) # a, b, c -> Liste hafızada kalıyor 
-
+print(ekle_dogru('d')) # d
+print(ekle_dogru('e')) # e
+print(ekle_dogru('f')) # f -> Liste hafızada kalmaz
+ 
 
 # 5) Paketten çıkarma: sayılar listesini toplam()'a, bir sözlüğü de etkinlik_ozeti()'ne
 #    tek tek yazmadan geçir (* ve ** ile).
@@ -88,10 +90,10 @@ print(" Bölüm 1' deki fonksiyonlara eklendi ")
 # 7) sehir_basliklari(etkinlikler, sehir) fonksiyonu yaz: verilen şehirdeki başlıkları döndürsün.
 #    Tipleri list[dict], str ve list[str] olarak yaz.
 print("--------------------- 7 ---------------------")
-def sehir_basliklari(etkinlikler: list[dict], sehir:list[str]) -> list[str]: 
-    return {etkinlik["title"] for etkinlik in etkinlikler}
+def sehir_basliklari(etkinlikler: list[dict], sehir:str) -> list[str]: 
+    return [etkinlik["title"] for etkinlik in etkinlikler if etkinlik["city"] == sehir ]
 
-print(sehir_basliklari(events, ["İzmir", "İstanbul"]))
+print(sehir_basliklari(events, "İzmir"))
 
 # 8) ilk_ucretsiz(etkinlikler) yaz: ilk ücretsiz etkinliğin başlığını döndürsün, yoksa None.
 #    Dönüş tipi: str | None
@@ -130,8 +132,8 @@ for event in events :
 #     Tuple'daki "değiştirilemez" fikriyle bağlantısını yorum olarak yaz.
 print("--------------------- 14 ---------------------")
 for event in events:
-    # event.price = 0 #  -> Frozen varsayılan False hepsini değiştirdi :) 
-    print(event.ozet())
+    # event.price = 0  # -> FrozenInstanceError: cannot assign to field 'price'
+    print(event.ozet()) # -> Frozen true değişime izin vermedi Tuple ile aynı şekilde 
 
 # --- BÖLÜM 4: modül → src/ai_lab/arama.py ---
 

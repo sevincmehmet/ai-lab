@@ -33,8 +33,8 @@ def test_fiyat_araligi_sinirlari_dahil():
     #        sonra: assert "Caz Akşamı" in basliklar
     sonuc = fiyat_araligi(ETKINLIKLER, 300, 550)
     sonuc_basliklar = [event.title for event in sonuc]
-    assert "Caz Akşamı" and "Seramik Atölyesi" in sonuc_basliklar
-
+    assert "Caz Akşamı"  in sonuc_basliklar
+    assert "Seramik Atölyesi" in sonuc_basliklar
 
 def test_en_pahali_rock_festivali():
     # İpucu: en_pahali bir Event döndürüyor, .title ile başlığına bak.

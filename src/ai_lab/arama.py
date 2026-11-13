@@ -6,7 +6,7 @@ from ai_lab.etkinlik import Event
 #     - fiyat_araligi(etkinlikler, en_az, en_cok) -> list[Event]   (sınırlar dahil)
 #     - en_pahali(etkinlikler) -> Event   (boş listede ne olmalı? Karar ver)
 
-def sehre_gore(etkinlikler: list[dict], sehir:str) -> list[Event]:
+def sehre_gore(etkinlikler: list[Event], sehir: str) -> list[Event]:
     """Verilen şehirdeki etkinlikleri döndürür"""
     aranan = sehir.replace("İ", "i").replace("I", "ı").lower()
     return [
@@ -23,7 +23,7 @@ def fiyat_araligi(etkinlikler: list[Event], en_az:float, en_cok:float) -> list[E
     return [event for event in etkinlikler if event.price>=en_az and event.price<=en_cok]
 
 def en_pahali(etkinlikler: list[Event]) -> Event:
-    """En pahalı etkinliği döndürür. Liste boşsa None döner."""
+    """En pahalı etkinliği döndürür. Liste boşsa hata fırlatır."""
     
     if not etkinlikler:
         raise ValueError("Etkinlik listesi boş")
