@@ -15,13 +15,13 @@ while True:
         tasks.append(gorev)
 
     elif secim == "2":
-        for i, task in enumerate(tasks):
-            print(i, "-", task)
+        for i, task in enumerate(tasks, 1):
+            print(f"{i} - {task}")
 
     elif secim == "3":
         silinecek = int(input("Silinecek görev numarası: "))
-        if 0 <= silinecek < len(tasks):
-            tasks.pop(silinecek)
+        if 1 <= silinecek <= len(tasks):
+            tasks.pop(silinecek - 1)
         else:
             print("Geçersiz numara.")
 

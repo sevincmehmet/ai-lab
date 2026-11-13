@@ -54,10 +54,10 @@ renkler = tuple(renkler_listesi) # => Yeni bir tuple oluşturur eskisinden farkl
 import sys
 
 liste = [1, 2, 3, 4, 5]
-tuple = (1, 2, 3, 4, 5)
+demet = (1, 2, 3, 4, 5)  # 'tuple' adı built-in fonksiyonu ezer, kullanma
 
 print(sys.getsizeof(liste)) # 104 -> daha esnektir 
-print(sys.getsizeof(tuple)) # 88 -> tuple daha az yer kaplar -> daha hızlıdır 
+print(sys.getsizeof(demet)) # 88 -> tuple daha az yer kaplar -> daha hızlıdır 
 
 
 def hesapla(a, b): 

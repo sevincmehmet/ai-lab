@@ -1,13 +1,13 @@
 # isim = input("İsminiz nedir? ")
 # yemek= input("Sevdiğiniz Yemek Nedir? ")
 #
-# print(isim + " " +yemek + " seviyormuş king")
+# print(f"{isim} {yemek} seviyormuş king")
 
 
 # isim = "mehmet"
 # yas = 24
 #
-# print(isim + " " + str(yas) + " Yaşında")
+# print(f"{isim} {yas} yaşında")
 
 # x = 5
 # y = 9
@@ -23,9 +23,9 @@
 # number1 = int(input("1. Sayıyı gir: "))
 # number2 = int(input("2. Sayıyı gir: "))
 #
-# sum = number1 + number2
+# toplam = number1 + number2
 #
-# print("Sayılarınızın toplamı: " + str(sum))
+# print(f"Sayılarınızın toplamı: {toplam}")
 
 
 
@@ -110,7 +110,7 @@
 
 # i = 1
 # while(i <= 1000):
-#     print(i);
+#     print(i)
 #     i = i + 1
 
 
@@ -157,7 +157,7 @@
 #     return a+b
 
 # def yazdır(sonuc):
-#     print("Sonuç: ", str(sonuc)) 
+#     print(f"Sonuç: {sonuc}") 
 
 # deger = topla(14, 22)
 # yazdır(deger)

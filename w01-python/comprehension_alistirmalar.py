@@ -1,7 +1,6 @@
 # COMPREHENSION ALIŞTIRMALARI
 # Her görevin altına tek satırlık bir comprehension yaz ve print et.
 # for döngüsü + append kullanma; amaç tek satırda çözmek.
-import math
 events = [
     {"title": "Duman Konseri", "city": "İzmir", "category": "konser", "price": 750, "day": "cumartesi"},
     {"title": "Stand-up Gecesi", "city": "İstanbul", "category": "komedi", "price": 400, "day": "cuma"},
@@ -30,24 +29,24 @@ cift = list(filter(lambda x: x%2 == 0, sayilar))
 print(cift)
 
 # 3) Bütün etkinliklerin sadece başlıklarını (title) içeren bir liste oluştur.
-eventTitles = list(map(lambda event :  event["title"], events))
-print(eventTitles)
+event_titles = list(map(lambda event :  event["title"], events))
+print(event_titles)
 
 # 4) Sadece İzmir'deki etkinliklerin başlıklarını al.
-eventsToİzmir = list(filter(lambda event : event["city"].lower() == "izmir", events))
-print(eventsToİzmir)
+izmir_events = list(filter(lambda event: event["city"] == "İzmir", events))  # .lower() kullanma: "İzmir".lower() -> "i̇zmir"
+print(izmir_events)
 
 # 5) Ücretsiz (price == 0) etkinliklerin başlıklarını al.
-freeEvents = list(filter(lambda event: event["price"] == 0 , events))
-print(freeEvents)
+free_events = list(filter(lambda event: event["price"] == 0 , events))
+print(free_events)
 
 # 6) Cumartesi günündeki konserlerin başlıklarını al (iki koşul).
-cmrtsKonserleri = list(filter(lambda event: event["day"].lower() == "cumartesi" and event["category"].lower() and "konser", events))
-print(cmrtsKonserleri)
+cmrts_konserleri = list(filter(lambda event: event["day"] == "cumartesi" and event["category"] == "konser", events))
+print(cmrts_konserleri)
 
 # 7) kelimeler listesindeki her kelimeyi küçük harfe çevir.
-kucukKelimeler = list(map(lambda event : event.lower(), kelimeler))
-print(kucukKelimeler)
+kucuk_kelimeler = list(map(lambda kelime: kelime.lower(), kelimeler))
+print(kucuk_kelimeler)
 
 # 8) Her etkinlik için "Başlık - Şehir" şeklinde bir metin listesi oluştur (f-string kullan).
 title_city = list(map(lambda event: f"{event["title"]} - {event["city"]}", events))
@@ -55,8 +54,8 @@ print(title_city)
 
 # 9) Her etkinlik için fiyat 0 ise "Ücretsiz", değilse "Ücretli" yazan bir liste oluştur.
 #    İpucu: koşul ifadesi (x if koşul else y) for'dan ÖNCE yazılır.
-xx = list(map(lambda event: "Ücretsiz" if event["price"] == 0 else "Ücretli ", events ))
-print("xx")
+ucret_durumu = list(map(lambda event: "Ücretsiz" if event["price"] == 0 else "Ücretli", events))
+print(ucret_durumu)
 
 # --- DICT COMPREHENSION ---
 
@@ -66,9 +65,9 @@ print(events_prices)
 
 # 11) Sadece 500 TL'den pahalı etkinlikler için {başlık: fiyat} sözlüğü oluştur.
 # besyuz_ustu = list(filter(lambda event : event["price"]>500 , events))
-# baslık_fiyat = {event["title"] : event["price"] for event in besyuz_ustu}
-baslık_fiyat = {event["title"]: event["price"] for event in events if event["price"] > 500}
-print(baslık_fiyat)
+# baslik_fiyat = {event["title"] : event["price"] for event in besyuz_ustu}
+baslik_fiyat = {event["title"]: event["price"] for event in events if event["price"] > 500}
+print(baslik_fiyat)
 
 # 12) kelimeler listesinden {kelime: harf_sayısı} sözlüğü oluştur.
 sozluk = {kelime : len(kelime) for kelime in kelimeler}
@@ -83,6 +82,7 @@ print(sehirler)
 # 14) Etkinlik kategorilerini set olarak al. Kaç farklı kategori var? (len)
 kategoriler = {event["category"] for event in events}
 print(kategoriler)
+print("Kategori sayısı:", len(kategoriler))
 
 # --- BİRLEŞTİR ---
 
@@ -110,15 +110,3 @@ sehir_etkinlikleri = {
 }
 
 print(sehir_etkinlikleri)
-
-
-# --- DÜZELT (önceki dosyalarda) ---
-
-# A) Dictionary2.py: input() içinde virgül kullanılmış, f-string ile düzelt.
-#    "if secim == '2'" satırını elif yap, 3 (öğrenci ekle) ve 0 (çıkış) seçeneklerini yaz.
-# B) Tuple.py: "tuple = (...)" değişkeninin adını değiştir (built-in fonksiyonu eziyor).
-# C) main.py: "sum = ..." değişkeninin adını değiştir; string birleştirmeleri f-string'e çevir.
-# D) Set.py: "Birleşimde 3 bulunmaz" yorumunu düzelt.
-# E) TodoApp.py: listeyi 1'den başlayarak numaralandır (enumerate'in 2. parametresi).
-# F) Dosya adlarını snake_case yap: switch-match-case.py -> match_case.py, List.py -> list_ornekleri.py gibi.
-#    (PyCharm'da sağ tık -> Refactor -> Rename)

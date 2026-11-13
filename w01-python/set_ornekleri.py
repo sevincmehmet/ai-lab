@@ -17,6 +17,6 @@ B = {3, 4, 5}
 C = A|B # A U B
 A.update(B) # A = A U B
 A |= B
-print(C) # Birleşimde 3 Bulunmaz bu şekilde
+print(C) # Birleşimde 3 sadece bir kez bulunur: {1, 2, 3, 4, 5}
 print(A)
 """
