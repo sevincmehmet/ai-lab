@@ -152,6 +152,20 @@ def test_en_pahali_rock_festivali():
 - önce kırmızı (test yaz) sonra yeşil (kodu düzelt) -> izmir küçük harf bonusunu böyle yaptım
 - `uv run pytest -v`
 
+## 15. `"a" and "b" in liste` -> ikisini birden KONTROL ETMİYO
+
+```python
+assert "Caz Akşamı" and "Seramik Atölyesi" in basliklar   # ❌ sadece Seramik'e bakıyo
+# Python bunu şöyle okuyo: "Caz Akşamı" and ("Seramik Atölyesi" in basliklar)
+# boş olmayan string her zaman True -> ilk kısım hiçbi şey test etmiyo, test yine yeşil
+
+assert "Caz Akşamı" in basliklar          # ✅ ayrı ayrı yaz
+assert "Seramik Atölyesi" in basliklar
+```
+
+- JS'te `"a" && arr.includes("b")` yazmakla aynı tuzak
+- yeşil test != doğru test. test geçiyosa bi kere de bozup kırmızı yandığını gör
+
 ---
 
 ### Bonus
