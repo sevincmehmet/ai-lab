@@ -1,0 +1,21 @@
+[project]
+name = "ai-lab"
+version = "0.1.0"
+description = "12 haftalık LLM ve AI agent laboratuvarı"
+authors = [
+    { name = "Mehmet Ali Sevinç", email = "93881127+sevincmehmet@users.noreply.github.com" }
+]
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+ai-lab = "ai_lab:main"
+
+[build-system]
+requires = ["uv_build>=0.13.8,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
