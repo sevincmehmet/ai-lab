@@ -24,22 +24,22 @@ kareler = [sayi ** 2 for sayi in sayilar]
 print(kareler)
 kareler2 = list(map(lambda x: x**2, sayilar))
 print(kareler2)
-kareler_compherehesion = {x: x**2 for x in sayilar}
-print(kareler_compherehesion)
+kareler_sozluk = {x: x**2 for x in sayilar}  # bonus: dict comprehension
+print(kareler_sozluk)
 
 # 2) sayilar listesinden sadece çift olanları al.
 print("----------------2----------------")
 cift = list(filter(lambda x: x%2 == 0, sayilar))
-cift_compherehesion = {x for x in sayilar if x%2 == 0}
+cift_comp = [x for x in sayilar if x % 2 == 0]
 print(cift)
-print(cift_compherehesion)
+print(cift_comp)
 
 # 3) Bütün etkinliklerin sadece başlıklarını (title) içeren bir liste oluştur.
 print("----------------3----------------")
 event_titles = list(map(lambda event :  event["title"], events))
-event_titles_compherehesion = [event["title"] for event in events]
+event_titles_comp = [event["title"] for event in events]
 print(event_titles)
-print(event_titles_compherehesion)
+print(event_titles_comp)
 
 # 4) Sadece İzmir'deki etkinliklerin başlıklarını al.
 print("----------------4----------------")
@@ -80,7 +80,9 @@ print(title_city_comp)
 #    İpucu: koşul ifadesi (x if koşul else y) for'dan ÖNCE yazılır.
 print("----------------9----------------")
 ucret_durumu = list(map(lambda event: "Ücretsiz" if event["price"] == 0 else "Ücretli", events))
+ucret_durumu_comp = ["Ücretsiz" if event["price"] == 0 else "Ücretli" for event in events]
 print(ucret_durumu)
+print(ucret_durumu_comp)
 
 # --- DICT COMPREHENSION ---
 
