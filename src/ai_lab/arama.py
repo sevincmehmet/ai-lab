@@ -9,20 +9,23 @@ from ai_lab.etkinlik import Event
 def sehre_gore(etkinlikler: list[dict], sehir:str) -> list[Event]:
     """Verilen şehirdeki etkinlikleri döndürür"""
     aranan = sehir.replace("İ", "i").replace("I", "ı").lower()
-    return [event for event in etkinlikler if event.city.replace("İ", "i").replace("I", "ı").lower() == aranan]
+    return [
+        event for event in etkinlikler 
+        if event.city.replace("İ", "i").replace("I", "ı").lower() == aranan
+    ]
 
-def ucretsizler(etkinlikler: list[dict]) -> list[Event]:
+def ucretsizler(etkinlikler: list[Event]) -> list[Event]:
     """Ücretsiz etkinlikleri döndürür."""
     return [event for event in etkinlikler if event.ucretsiz_mi()]
 
-def fiyat_araligi(etkinlikler: list[dict], en_az:float, en_cok:float) -> list[Event]:
+def fiyat_araligi(etkinlikler: list[Event], en_az:float, en_cok:float) -> list[Event]:
     """Belirtilen fiyat aralığındaki etkinlikleri döndürür (sınırlar dahil)."""
     return [event for event in etkinlikler if event.price>=en_az and event.price<=en_cok]
 
-def en_pahali(etkinlikler: list[dict]) -> Event:
+def en_pahali(etkinlikler: list[Event]) -> Event:
     """En pahalı etkinliği döndürür. Liste boşsa None döner."""
     
     if not etkinlikler:
-        None
+        raise ValueError("Etkinlik listesi boş")
 
     return max(etkinlikler, key=lambda event: event.price)

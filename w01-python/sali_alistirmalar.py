@@ -130,7 +130,7 @@ for event in events :
 #     Tuple'daki "değiştirilemez" fikriyle bağlantısını yorum olarak yaz.
 print("--------------------- 14 ---------------------")
 for event in events:
-    event.price = 0 #  -> Frozen varsayılan False hepsini değiştirdi :) 
+    # event.price = 0 #  -> Frozen varsayılan False hepsini değiştirdi :) 
     print(event.ozet())
 
 # --- BÖLÜM 4: modül → src/ai_lab/arama.py ---
