@@ -19,41 +19,66 @@ kelimeler = ["python", "React", "llm", "Agent", "api", "TypeScript"]
 # --- LIST COMPREHENSION ---
 
 # 1) sayilar listesindeki her sayının karesini içeren bir liste oluştur.
+print("----------------1----------------")
 kareler = [sayi ** 2 for sayi in sayilar]
 print(kareler)
 kareler2 = list(map(lambda x: x**2, sayilar))
 print(kareler2)
+kareler_compherehesion = {x: x**2 for x in sayilar}
+print(kareler_compherehesion)
 
 # 2) sayilar listesinden sadece çift olanları al.
+print("----------------2----------------")
 cift = list(filter(lambda x: x%2 == 0, sayilar))
+cift_compherehesion = {x for x in sayilar if x%2 == 0}
 print(cift)
+print(cift_compherehesion)
 
 # 3) Bütün etkinliklerin sadece başlıklarını (title) içeren bir liste oluştur.
+print("----------------3----------------")
 event_titles = list(map(lambda event :  event["title"], events))
+event_titles_compherehesion = [event["title"] for event in events]
 print(event_titles)
+print(event_titles_compherehesion)
 
 # 4) Sadece İzmir'deki etkinliklerin başlıklarını al.
+print("----------------4----------------")
 izmir_events = list(filter(lambda event: event["city"] == "İzmir", events))  # .lower() kullanma: "İzmir".lower() -> "i̇zmir"
 print(izmir_events)
+izmir_event_titles = [event["title"] for event in events if event["city"] == "İzmir"]
+print(izmir_event_titles)
 
 # 5) Ücretsiz (price == 0) etkinliklerin başlıklarını al.
+print("----------------5----------------")
 free_events = list(filter(lambda event: event["price"] == 0 , events))
-print(free_events)
+free_events_title = list(map(lambda event: event["title"], free_events))
+free_events_comp = [event["title"] for event in events if event["price"] == 0]
+print(free_events_title)
+print(free_events_comp)
 
 # 6) Cumartesi günündeki konserlerin başlıklarını al (iki koşul).
+print("----------------6----------------")
 cmrts_konserleri = list(filter(lambda event: event["day"] == "cumartesi" and event["category"] == "konser", events))
+cmrts_konserleri_comp = [event["title"] for event in events if event["day"] == "cumartesi" and event["category"] == "konser"]
 print(cmrts_konserleri)
+print(cmrts_konserleri_comp)
 
 # 7) kelimeler listesindeki her kelimeyi küçük harfe çevir.
+print("----------------7----------------")
 kucuk_kelimeler = list(map(lambda kelime: kelime.lower(), kelimeler))
+kucuk_kelimeler_comp = [kelime.lower() for kelime in kelimeler]
 print(kucuk_kelimeler)
+print(kucuk_kelimeler_comp)
 
 # 8) Her etkinlik için "Başlık - Şehir" şeklinde bir metin listesi oluştur (f-string kullan).
+print("----------------8----------------")
 title_city = list(map(lambda event: f"{event["title"]} - {event["city"]}", events))
+title_city_comp = [f"{event["title"]} - {event["city"]}" for event in events ]
 print(title_city)
-
+print(title_city_comp)
 # 9) Her etkinlik için fiyat 0 ise "Ücretsiz", değilse "Ücretli" yazan bir liste oluştur.
 #    İpucu: koşul ifadesi (x if koşul else y) for'dan ÖNCE yazılır.
+print("----------------9----------------")
 ucret_durumu = list(map(lambda event: "Ücretsiz" if event["price"] == 0 else "Ücretli", events))
 print(ucret_durumu)
 
