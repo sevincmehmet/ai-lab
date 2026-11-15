@@ -168,6 +168,121 @@ assert "Seramik Atölyesi" in basliklar
 
 ---
 
+## 16. `"1" / 2` -> JS'te 0.5, Python'da TypeError
+
+```python
+"1" / 2        # ❌ TypeError: unsupported operand type(s) for /: 'str' and 'int'
+int("1") / 2   # ✅ 0.5 -> çevirmeyi kendin yapıcaksın
+```
+
+- JS sessizce string'i sayıya çeviriyo (`"1" / 2 === 0.5`), Python tahmin etmiyo, hata veriyo
+- iyi bi şey aslında: yanlış tip erken patlıyo, sessizce saçma sonuç üretmiyo
+- dışardan gelen veri (input, form, API) string gelir -> önce `int()` / `float()`, hata ihtimali varsa `try/except ValueError`
+
+---
+
+## 17. try/catch vs try/except -> hata türünü yazıyosun
+
+```python
+try:
+    sayi = int(metin)
+except ValueError:          # JS'te catch (e) her şeyi yakalar, burda türünü seçiyosun
+    print("sayı değil")
+else:                       # JS'te yok -> hata ÇIKMAZSA çalışır
+    print(sayi * 2)
+finally:                    # JS'teki finally ile aynı -> her durumda çalışır
+    print("bitti")
+```
+
+- `except Exception:` yazıp her şeyi yakalamak tuzak -> `NameError` gibi kendi yazım hatamı da yutuyo, "bir şeyler ters gitti" deyip geçiyo
+- yakalıyosam en azından türünü ve mesajını bas: `print(f"{type(e).__name__}: {e}")`
+
+---
+
+## 18. Kendi exception'ım + ata ile yakalamak
+
+```python
+class EtkinlikHatasi(Exception):              # JS: class EtkinlikHatasi extends Error {}
+    """Projedeki bütün hataların atası"""
+
+class EtkinlikBulunamadi(EtkinlikHatasi):
+    """Aranan şey yoksa"""
+
+try:
+    sehirde_ara(ETKINLIKLER, "Sivas")
+except EtkinlikHatasi as e:                   # ata ile yakalayınca çocuklar da yakalanıyo
+    print(f"Hata: {e}")
+```
+
+- içleri boş olabiliyo, docstring yeter, `pass`'e gerek yok
+- testte: `with pytest.raises(EtkinlikBulunamadi, match="Sivas"):`
+
+---
+
+## 19. with = try/finally'nin kısa yolu
+
+```python
+with open("izmir.txt", "w", encoding="utf-8") as f:
+    f.write("...")
+print(f.closed)   # True -> blok bitince (hata çıksa bile) kendi kapattı
+```
+
+- `encoding="utf-8"` her zaman yaz -> İ, Ç, ş bozulmasın
+- kendi context manager'ım: `@contextmanager` + `yield` -> yield'den öncesi girişte, `finally` çıkışta çalışıyo (`zamanla` böyle yazıldı, `ai_lab/araclar.py`)
+- JS'te birebir karşılığı yok, en yakını `try { } finally { x.close() }` ya da yeni `using`
+
+---
+
+## 20. async: event loop'u ben başlatıyorum
+
+```python
+async def bekle(isim: str, sn: float) -> str:
+    await asyncio.sleep(sn)
+    return isim
+
+asyncio.run(main())   # JS'te event loop hazır, Python'da asyncio.run olmadan HİÇBİR ŞEY çalışmaz
+```
+
+- `bekle("b", 1)` -> await'i unutunca `<coroutine object ...>` döner (JS'teki `Promise {<pending>}`)
+- uyarı: `RuntimeWarning: coroutine 'bekle' was never awaited` -> içindeki kod hiç çalışmadı
+- `async with httpx.AsyncClient() as client:` -> with'in async hali, client'ı iş bitince kapatıyo
+
+---
+
+## 21. gather = Promise.all
+
+```python
+sonuclar = await asyncio.gather(bekle("a", 1), bekle("b", 1), bekle("c", 1))
+# ['a', 'b', 'c'] -> sıra korunuyo, hangisi önce biterse bitsin
+```
+
+- sıralı: toplam süre = sürelerin TOPLAMI (1+1+1 = 3 sn)
+- paralel: toplam süre = EN UZUN sürenin kendisi (~1 sn)
+- aslında aynı anda 3 iş yapmıyo: istek atıyo, cevabı beklerken diğerini atıyo -> beklemeler üst üste biniyo. JS event loop'uyla aynı
+- o yüzden async API / LLM / DB gibi BEKLEME olan işte hızlandırır, hesaplama ağır işte hızlandırmaz
+- gerçek ölçüm (httpbin delay/1 x3): sıralı 3.94 sn, paralel 1.53 sn
+
+---
+
+## 22. return_exceptions=True = Promise.allSettled
+
+```python
+sonuclar = await asyncio.gather(..., return_exceptions=True)
+for sonuc in sonuclar:
+    if isinstance(sonuc, Exception):
+        print(f"hata: {type(sonuc).__name__}")
+    else:
+        print(f"başarılı: {sonuc.status_code}")
+```
+
+- normal gather: ilk hata hepsini patlatıyo, sağlam sonuçlar da kayboluyo (`Promise.all` gibi)
+- `return_exceptions=True`: hata da listeye sonuç olarak giriyo, hiçbiri kaybolmuyo
+- httpx 500'ü hata SAYMIYO -> `cevap.raise_for_status()` çağırmazsam normal cevap gibi döner
+- `timeout=1` vermezsem varsayılan 5 sn -> delay/3 sorunsuz geçti, timeout yemedi
+- LLM API'si tam bu iki şekilde patlıyacak: 5xx (`HTTPStatusError`) ve zaman aşımı (`TimeoutException`). ikisinin atası `httpx.HTTPError`
+
+---
+
 ### Bonus
 - satır sonuna `;` gerek yok
 - string birleştirme yerine f-string -> `f"{isim} {yas} yaşında"` (JS template literal)

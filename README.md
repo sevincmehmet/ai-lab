@@ -17,7 +17,7 @@
 
 | Hafta | Klasör | Konu | Durum |
 |---|---|---|---|
-| 1 | [`w01-python`](w01-python) | Python temelleri: koleksiyonlar, comprehension, `*args/**kwargs`, type hint, dataclass, modüller, pytest | 🟡 |
+| 1 | [`w01-python`](w01-python) | Python temelleri: koleksiyonlar, comprehension, `*args/**kwargs`, type hint, dataclass, modüller, pytest, exception'lar, `with` / context manager, `async`/`await`, `asyncio.gather`, httpx | 🟡 |
 
 ## Yapı
 
@@ -27,6 +27,8 @@ ai-lab/
 │   ├── etkinlik.py      # Event modeli (dataclass)
 │   ├── veri.py          # örnek etkinlik verisi
 │   ├── arama.py         # şehir, fiyat, ücretsiz etkinlik araması
+│   ├── hatalar.py       # EtkinlikHatasi, EtkinlikBulunamadi
+│   ├── araclar.py       # zamanla(): süre ölçen context manager
 │   └── __init__.py      # main(): uv run ai-lab
 ├── tests/               # pytest testleri
 ├── w01-python/          # haftalık alıştırmalar
@@ -45,4 +47,4 @@ uv run pytest -v     # testleri çalıştırır
 
 ## Notlar
 
-- [JS'ten Python'a: kafama takılanlar](notes/js-vs-python.md): Türkçe `İ` ile `.lower()` tuzağı, varsayılan argüman tuzağı, `Event.price` ile `event.price` farkı gibi.
+- [JS'ten Python'a: kafama takılanlar](notes/js-vs-python.md): Türkçe `İ` ile `.lower()` tuzağı, varsayılan argüman tuzağı, `Event.price` ile `event.price` farkı, `await`'i unutunca ne olduğu, `gather` = `Promise.all` gibi.

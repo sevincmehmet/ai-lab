@@ -6,7 +6,9 @@ authors = [
     { name = "Mehmet Ali Sevinç", email = "93881127+sevincmehmet@users.noreply.github.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "httpx>=0.28.1",
+]
 
 [project.scripts]
 ai-lab = "ai_lab:main"

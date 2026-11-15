@@ -1,8 +1,9 @@
 import pytest
 
-from ai_lab.arama import en_pahali, fiyat_araligi, sehre_gore, ucretsizler
+from ai_lab.arama import en_pahali, fiyat_araligi, sehre_gore, ucretsizler, sehirde_ara
 from ai_lab.etkinlik import Event
 from ai_lab.veri import events
+from ai_lab.hatalar import EtkinlikBulunamadi
 
 # Bütün testlerde kullanacağımız Event listesi
 ETKINLIKLER = [Event(**e) for e in events]
@@ -50,3 +51,14 @@ def test_sehre_gore_kucuk_harf():
     """Küçük harfle 'izmir' aratıldığında da (Türkçe karakter duyarlılığıyla) sonuç dönmeli."""
     sonuc = sehre_gore(ETKINLIKLER, "izmir")
     assert len(sonuc) == 3
+
+def test_sehirde_ara(): 
+    """- sehirde_ara İzmir'de 3 etkinlik döndürüyor   """
+    sonuc_izmir = len(sehirde_ara(ETKINLIKLER, "İzmir"))
+    assert sonuc_izmir == 3
+ 
+
+def test_sehirde_ara_hata():
+    """- sehirde_ara Sivas'ta EtkinlikBulunamadi fırlatıyor"""
+    with pytest.raises(EtkinlikBulunamadi, match="Sivas"):
+        sehirde_ara(ETKINLIKLER, "Sivas")

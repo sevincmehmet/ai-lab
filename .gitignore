@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
+w01-python/izmir.txt
+KALDIGIMIZ_YER.txt
