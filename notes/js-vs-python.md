@@ -283,6 +283,140 @@ for sonuc in sonuclar:
 
 ---
 
+## 23. `for` döngüsünün değişkeni döngüden SONRA da yaşıyo
+
+```js
+for (let x of [1, 2, 3]) {}
+console.log(x)   // ReferenceError: x is not defined -> let bloğa ait
+```
+
+```python
+for x in [1, 2, 3]:
+    pass
+print(x)         # 3 -> son değer duruyo, hata yok
+```
+
+- Python'da blok scope yok: `for`, `if`, `while`, `try`, `with` yeni scope AÇMIYO. scope'u sadece fonksiyon (ve class) açıyo
+- yani JS'teki `let` gibi değil, eski `var` gibi davranıyo
+- istisna: comprehension'ın değişkeni DIŞARI ÇIKMIYO -> `[h for h in hatalar]` sonrası `h` yok
+- başıma gelen (perşembe #7): `hata_list = [hata for hata in hatalar]` yazıp sonra `hata['loc']` bastım. comprehension'daki `hata` dışarı çıkmadığı için Python 3. görevdeki `for hata in ...` döngüsünden KALAN `hata`'yı buldu -> `Urun`'un hatası yerine `('yas',) missing` bastı. çökmedi, sessizce yanlış çıktı verdi, en kötüsü de bu
+- dikkat: liste boşsa döngü hiç dönmez, değişken hiç oluşmaz -> sonra kullanırsan `NameError` (ya da daha önceki bir değeri sessizce kullanır)
+- ters örnek: `except ValueError as e:` -> `e` except bloğu bitince SİLİNİYO, dışarıda kullanamazsın. (bu sefer Python sıkı, JS'te `catch (e)` zaten bloğa ait)
+- kural: döngü değişkenini döngü dışında kullanma. lazımsa döngüden önce açıkça tanımla
+
+---
+
+## 24. Pydantic = Zod
+
+```ts
+const Kisi = z.object({ isim: z.string(), yas: z.number() })
+Kisi.parse(veri)   // yanlışsa ZodError
+```
+
+```python
+class Kisi(BaseModel):
+    isim: str
+    yas: int
+
+Kisi(isim="Ali", yas=24)   # yanlışsa ValidationError
+```
+
+- fark: Zod'da şemayı ayrı yazıp tipi `z.infer` ile çıkarıyorum, Pydantic'te class'ın kendisi hem tip hem şema
+- `Field(min_length=2)` = `z.string().min(2)`, `Field(ge=0)` = `z.number().min(0)`
+- `e.errors()` -> hata listesi, her birinde `loc` (hangi alan) ve `type` (ne hatası) var. Zod'daki `error.issues` gibi
+- iç içe model de çalışıyo: `adres: Adres` dersem içteki sözlük kendiliğinden `Adres`'e dönüşüyo, onu da doğruluyo
+- modelde OLMAYAN alan gelirse sessizce yok sayıyo (test yazarken `date` diye alan verdim, hata bekledim, gelmedi). kızsın istersem `extra="forbid"`
+- hafta 2'de LLM'in döndürdüğü JSON'u tam bununla doğrulayacağım
+
+---
+
+## 25. dataclass vs BaseModel
+
+|                       | `@dataclass`      | `BaseModel`              |
+|-----------------------|-------------------|--------------------------|
+| tip kontrolü          | YOK, ne verirsen  | VAR, çalışırken          |
+| `yas="24"`            | string kalıyo     | `24` int'e çeviriyo      |
+| `yas="otuz"`          | sessizce kabul    | `ValidationError`        |
+| sözlüğe/JSON'a çevirme | `asdict()`       | `model_dump()` / `model_dump_json()` |
+
+- dataclass = TS `interface` gibi, sadece şekil tarif ediyo, kimse kontrol etmiyo
+- BaseModel = Zod şeması, kapıda kimlik soruyo
+- kural: kendi içimde dolaşan veri -> dataclass yeter. DIŞARIDAN gelen veri (API, JSON, LLM) -> BaseModel
+
+---
+
+## 26. Tip zorlama: "24" -> 24
+
+```python
+kisi = Kisi(isim="Ali", yas="24")
+type(kisi.yas)   # <class 'int'>  -> çevirdi
+Kisi(isim="Ali", yas="otuz")   # ValidationError -> çeviremedi
+```
+
+- Pydantic önce ÇEVİRMEYE çalışıyo, çeviremezse hata veriyo. Zod varsayılan olarak çevirmez, `z.coerce.number()` demek lazım
+- tarih de öyle: `"2026-11-21T20:00:00"` -> `datetime` oluyo. `"yarın akşam"` -> hata
+- testte `== 750` yetmez: `750 == 750.0` True. tipini de kontrol et -> `isinstance(e.price_min, int)`
+- testte yediğim tuzak: `price_min="750"` verdim, `GECERLI`'de `price_max=200`. çeviri çalıştı ama model_validator "max < min" diye patladı. tek alanı değiştirirken öbür kuralları unutma
+
+---
+
+## 27. model_validate_json = JSON.parse + doğrulama
+
+```python
+Kisi.model_validate({"isim": "Veli", "yas": 25})        # sözlükten
+Kisi.model_validate_json('{"isim": "Ayşe", "yas": 28}') # JSON string'den
+kisi.model_dump()        # -> dict
+kisi.model_dump_json()   # -> JSON string (JSON.stringify)
+```
+
+- JS'te `Kisi.parse(JSON.parse(metin))` iki adım, burada tek adım
+- liste için `TypeAdapter(list[Event]).validate_json(...)` -> events.json'u böyle yükledim
+- `model_dump_json()`'da `datetime` ISO string'e, `HttpUrl` düz string'e dönüyo
+
+---
+
+## 28. field_validator vs model_validator
+
+```python
+@field_validator("sehir")
+@classmethod
+def sehir_temizle(cls, sehir: str) -> str:
+    sehir = sehir.strip()
+    if not sehir:
+        raise ValueError("Şehir adı boş olamaz!")
+    return sehir          # RETURN etmezsem alan None olur
+
+@model_validator(mode="after")
+def fiyat_kontrol(self) -> Event:
+    if self.price_max < self.price_min:
+        raise ValueError("...")
+    return self           # burada da self'i döndürmek zorunlu
+```
+
+- `field_validator` -> TEK alan, değeri kontrol et ya da düzelt (strip gibi). Zod'daki `.refine()` / `.transform()`
+- `model_validator(mode="after")` -> BİRDEN FAZLA alan birlikte (min/max gibi). Zod'da objenin üstüne `.refine()`
+- `mode="after"` = tipler zaten çevrilmiş, `self` hazır geliyo
+- validator içinde `ValueError` fırlatıyorum, Pydantic onu `ValidationError`'a sarıp dışarı veriyo
+
+---
+
+## 29. pytest.mark.parametrize = Jest test.each
+
+```python
+@pytest.mark.parametrize("silinecek_alan", GECERLI.keys())
+def test_eksik_alan_hata_verir(silinecek_alan):
+    veri = {**GECERLI}
+    del veri[silinecek_alan]
+    with pytest.raises(ValidationError):
+        Event(**veri)
+```
+
+- tek test yazdım, 9 alanın her biri için ayrı test oldu -> çıktıda `[id]`, `[title]`... diye görünüyo, hangisi kırıldı hemen belli
+- `{**GECERLI, "price_min": "50"}` = JS `{...GECERLI, price_min: "50"}`
+- `with pytest.raises(X):` = Jest `expect(() => ...).toThrow(X)`
+
+---
+
 ### Bonus
 - satır sonuna `;` gerek yok
 - string birleştirme yerine f-string -> `f"{isim} {yas} yaşında"` (JS template literal)
