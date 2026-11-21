@@ -417,6 +417,117 @@ def test_eksik_alan_hata_verir(silinecek_alan):
 
 ---
 
+## 30. Express vs FastAPI
+
+```python
+app = FastAPI()
+
+@app.get("/events/{event_id}")
+def get_event_by_id(event_id: int) -> Event:
+    ...
+    return event
+```
+
+- Express'te `app.get("/events/:id", (req, res) => ...)`, burda route'u decorator ile yazıyorum
+- `res.json(event)` yok, direkt `return event` -> FastAPI JSON'a kendi çeviriyo (Pydantic modelini de)
+- dönüş tipi (`-> Event`) sadece süs değil, cevabı o şemaya göre doğruluyo ve `/docs`'a yazıyo
+- `/docs` bedava geliyo (Swagger), Express'te ayrıca kurman lazım
+
+---
+
+## 31. Path parametresi vs query parametresi
+
+```python
+@app.get("/events/{event_id}")      # path:  /events/5
+def get_event_by_id(event_id: int): ...
+
+@app.get("/search")                  # query: /search?city=izmir
+def search(city: str | None = None): ...
+```
+
+- path'te `{}` içinde varsa path parametresi (`req.params.id`)
+- `{}` içinde yoksa FastAPI onu query sayıyo (`req.query.city`)
+- `= None` verirsem opsiyonel oluyo, vermezsem zorunlu -> yoksa 422
+- tip yazınca çevirmeyi de kendi yapıyo: `event_id: int` -> `"5"` string değil `5` geliyo. Express'te `parseInt(req.params.id)` yazardım
+
+---
+
+## 32. Hata = raise HTTPException
+
+```python
+if event is None:
+    raise HTTPException(status_code=404, detail="Etkinlik Bulunamadı")
+```
+
+- Express'te `return res.status(404).json({...})`, burda `raise` ediyorum, `return` değil
+- `raise` fonksiyonu orda kesiyo, FastAPI yakalayıp `{"detail": "..."}` olarak dönüyo
+- `if not event` yerine `if event is None` -> "gerçekten yok" demek. `not` 0'ı, boş listeyi falan da yakalardı
+
+---
+
+## 33. 404 vs 422
+
+- **422** -> istek bozuk. `/events/abc`: "abc" int'e çevrilemedi, fonksiyon HİÇ çalışmadı, FastAPI kendisi döndü
+- **404** -> istek düzgün (`999` geçerli int), fonksiyon çalıştı ama o id yok. Bu kararı ben verdim
+- 422'yi ben yazmadım, tip ipucundan geliyo. `/search?from=yarın` de 422 -> tarih değil
+- hata gövdesinde `loc` nerede patladığını söylüyo: `["path", "event_id"]` ya da `["query", "from"]`
+
+---
+
+## 34. `from` ayrılmış kelime -> alias
+
+```python
+from_date: date | None = Query(default=None, alias="from")
+```
+
+- `from` Python'da keyword (`from x import y`), parametre adı yapamıyorum
+- `alias` ile URL'de `?from=2026-11-21` kalıyo, kodda `from_date` diye kullanıyorum
+- JS'te `const { from } = req.query` yazabiliyordum, sorun yoktu
+
+---
+
+## 35. datetime ile date karşılaştırılamıyo
+
+```python
+e.starts_at >= from_date          # datetime >= date -> TypeError -> 500!
+e.starts_at.date() >= from_date   # ikisi de date -> çalışıyo
+```
+
+- JS'te Date'ler sessizce karşılaştırılıyo, Python direkt hata fırlatıyo
+- testte değil, `/search?from=...` deneyince 500 aldım -> o yüzden endpoint'i elle de denemek lazım
+- `.date()` ile sadece gün kısmı -> `to=2026-12-01` dersem 1 Aralık'taki etkinlikler de dahil oluyo
+
+---
+
+## 36. TestClient = Supertest
+
+```python
+client = TestClient(app)
+
+def test_olmayan_etkinlik_404():
+    cevap = client.get("/events/99999")
+    assert cevap.status_code == 404
+    assert cevap.json()["detail"] == "Etkinlik Bulunamadı"
+```
+
+- sunucuyu ayağa kaldırmadan istek atıyo, `request(app).get(...)` gibi
+- `cevap.json()` -> Python list/dict, `expect(res.body)` yerine direkt `assert`
+
+---
+
+## 37. all([]) == True tuzağı
+
+```python
+assert len(veri) > 0                                    # bunu unutma!
+assert all(tr_lower(v["city"]) == "izmir" for v in veri)
+```
+
+- `all()` = JS `.every()`. İkisi de boş listede `true` döner
+- arama hiç sonuç döndürmese bile test geçerdi -> filtre bozulsa fark etmezdim
+- o yüzden önce `len(veri) > 0`, sonra `all(...)`
+
+---
+
 ### Bonus
 - satır sonuna `;` gerek yok
 - string birleştirme yerine f-string -> `f"{isim} {yas} yaşında"` (JS template literal)
